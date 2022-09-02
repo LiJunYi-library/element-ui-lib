@@ -1,4 +1,5 @@
 import config from './config.js';
+import Fetch from './http.js';
 
 const module = {};
 const element = {};
@@ -26,6 +27,19 @@ vueFiles.keys().forEach(vuePath => {
 });
 
 element.install = function install(Vue) {
+
+  Vue.prototype[config.name + '$confirm'] = function (...arg) {
+    return new Promise((resolve, reject) => {
+      this.$confirm(...arg)
+        .then(() => {
+          resolve(true)
+        })
+        .catch(() => {
+          resolve(false)
+        })
+    })
+  }
+
   for (const key in element) {
     if (Object.hasOwnProperty.call(element, key)) {
       Vue.component(`${config.name}-${key}`, element[key]);
@@ -39,4 +53,6 @@ element.install = function install(Vue) {
   }
 };
 
-export {element};
+import fetchOptions from './mixins/fetchOptions'
+
+export { element, Fetch, fetchOptions, config };
