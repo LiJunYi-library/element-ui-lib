@@ -124,7 +124,7 @@ Fetch.create = function (props = {}) {
 
     if (msgType === "success") {
       if (isShowMessage && text) Message({ message: text, type: msgType });
-    }else {
+    } else {
       if (isShowErrMessag && text) Message({ message: text, type: msgType });
     }
 
@@ -135,6 +135,9 @@ Fetch.create = function (props = {}) {
   request.get = (url, data = {}, config = {}) => request({ method: 'get', url: url, params: data }, config);
   request.put = (url, data = {}, config = {}) => request({ method: 'PUT', url: url, data: data }, config);
   request.post = (url, data = {}, config = {}) => request({ method: 'post', url: url, data: data }, config);
+  request.delete = (url, data = {}, config = {}) => request({ method: 'delete', url: url, data: data }, config);
+  request.options = (url, data = {}, config = {}) => request({ method: 'options', url: url, data: data }, config);
+  request.patch = (url, data = {}, config = {}) => request({ method: 'patch', url: url, data: data }, config);
   request.uploadFile = (url, data = {}, config = {}) => {
     const formData = new FormData();
     for (const key in data) {
@@ -142,7 +145,7 @@ Fetch.create = function (props = {}) {
         formData.append(key, data[key]);
       }
     }
-    return request({ method: 'post', url: url, data: formData, headers: { 'Content-Type': 'multipart/form-data' } }, config);
+    return request({ method: config.method || 'post', url: url, data: formData, headers: { 'Content-Type': 'multipart/form-data' } }, config);
   }
 
   request.downloadFile = (buffer, fileName) => {

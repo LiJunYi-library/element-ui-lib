@@ -8,7 +8,7 @@
     <el-table
       ref="elTable"
       :cell-class-name="
-        ({ row, column, rowIndex, columnIndex }) =>
+        ({row, column, rowIndex, columnIndex}) =>
           `row${pageIndex}-${row.index} column${columnIndex}`
       "
       class="mmb-table-content"
@@ -36,7 +36,13 @@
         align="center"
       />
       <slot />
+      <template slot="append">
+        <slot name="append" />
+      </template>
     </el-table>
+    <div>
+      <slot name="end" />
+    </div>
     <div v-if="showPagination" class="mmb-pagination">
       <el-pagination
         :current-page="pageIndex_"
@@ -49,21 +55,21 @@
   </div>
 </template>
 <script>
-import fetchOptions from "../mixins/fetchOptions";
+import fetchOptions from '../mixins/fetchOptions';
 
 export default {
   mixins: [fetchOptions],
-  name: "Table",
+  name: 'Table',
   props: {
     localStorageKey: String,
     isCachePageIndex: Boolean,
-    selectList: { type: Array, default: () => [] },
-    fit: { type: Boolean, default: true },
-    showSelection: { type: Boolean, default: true },
-    loading: { type: Boolean, default: false },
-    height: { type: String, default: "auto" },
-    maxHeight: { type: String, default: "auto" },
-    showPagination: { type: Boolean, default: true },
+    selectList: {type: Array, default: () => []},
+    fit: {type: Boolean, default: true},
+    showSelection: {type: Boolean, default: true},
+    loading: {type: Boolean, default: false},
+    height: {type: String, default: 'auto'},
+    maxHeight: {type: String, default: 'auto'},
+    showPagination: {type: Boolean, default: true},
     showIndex: Boolean,
     tableHeight: [Number, String],
     setTableData: {
@@ -81,12 +87,12 @@ export default {
       },
     },
     refTable: [String, Object, null],
-    pageIndex: { type: Number, default: 1 },
-    pageSize: { type: Number, default: 10 },
-    total: { type: Number, default: 0 },
+    pageIndex: {type: Number, default: 1},
+    pageSize: {type: Number, default: 10},
+    total: {type: Number, default: 0},
     sortProp: String,
     sortOrder: String,
-    tableData: { type: Array, default: () => [] },
+    tableData: {type: Array, default: () => []},
   },
   data() {
     return {
@@ -108,8 +114,8 @@ export default {
   computed: {
     defaultSort() {
       let order;
-      if (this.sortOrder === "Asc") order = "ascending";
-      if (this.sortOrder === "Desc") order = "descending";
+      if (this.sortOrder === 'Asc') order = 'ascending';
+      if (this.sortOrder === 'Desc') order = 'descending';
       if (!this.sortProp) {
         if (this.$refs.elTable) this.$refs.elTable.clearSort();
         return {};
@@ -156,15 +162,15 @@ export default {
   },
 
   created() {
-    this.$emit("update:pageIndex", this.pageIndex_);
-    this.$emit("update:pageSize", this.pageSize_);
-    this.$emit("update:sortProp", this.sortProp_);
-    this.$emit("update:sortOrder", this.sortOrder_);
+    this.$emit('update:pageIndex', this.pageIndex_);
+    this.$emit('update:pageSize', this.pageSize_);
+    this.$emit('update:sortProp', this.sortProp_);
+    this.$emit('update:sortOrder', this.sortOrder_);
   },
 
   mounted() {
     // this.handleTableData()
-    this.$emit("update:refTable", this.$refs.elTable);
+    this.$emit('update:refTable', this.$refs.elTable);
   },
   methods: {
     saveStore() {
@@ -175,50 +181,57 @@ export default {
     pageIndexChange(num) {
       this.pageIndex_ = num;
       this.saveStore();
-      this.$emit("update:pageIndex", num);
-      this.$emit("pageChange", this.pageIndex, this.pageSize);
+      this.$emit('update:pageIndex', num);
+      this.$emit('pageChange', this.pageIndex, this.pageSize);
     },
     sortChange(e) {
-      const { prop } = e;
-      let { order } = e;
-      if (order === "ascending") order = "Asc";
-      if (order === "descending") order = "Desc";
+      const {prop} = e;
+      let {order} = e;
+      if (order === 'ascending') order = 'Asc';
+      if (order === 'descending') order = 'Desc';
       this.sortProp_ = prop;
       this.sortOrder_ = order;
-      this.$emit("update:sortProp", prop);
-      this.$emit("update:sortOrder", order);
-      this.$emit("sortChange", e);
+      this.$emit('update:sortProp', prop);
+      this.$emit('update:sortOrder', order);
+      this.$emit('sortChange', e);
     },
     beforeFetch_() {
       const target = this.$refs.elTable.$el.children[2];
-      if (!this.innerloadingElement) {
+      if (!target) return;
+
+      if (!this.innerloadingElement)
         this.innerloadingElement = this.$loading({
           target,
           lock: true,
-          text: "Loading",
-          spinner: "el-icon-loading",
-          background: "rgba(255, 255, 255, 0.7)",
+          text: 'Loading',
+          spinner: 'el-icon-loading',
+          background: 'rgba(255, 255, 255, 0.7)',
         });
-      }
+
+      target.scrollTop = 0;
+      target.style.overflow = 'hidden';
     },
     afterFetch_() {
-      this.innerloadingElement.close();
+      if (this.innerloadingElement) this.innerloadingElement.close();
       this.innerloadingElement = null;
+      const target = this.$refs.elTable.$el.children[2];
+      if (!target) return;
+      target.style.overflow = 'auto';
     },
     cellMouseEvent(row, column, cell, event, key) {
-      const index = this.tableData_.findIndex((element) => element === row);
-      this.$children.forEach((element) => {
-        element.$children.forEach((el) => {
+      const index = this.tableData_.findIndex(element => element === row);
+      this.$children.forEach(element => {
+        element.$children.forEach(el => {
           if (el[key]) el[key](index, row, column, cell, event);
         });
       });
       this.$emit(key, index, row, column, cell, event);
     },
     cellMouseLeave(row, column, cell, event) {
-      this.cellMouseEvent(row, column, cell, event, "cellMouseLeave");
+      this.cellMouseEvent(row, column, cell, event, 'cellMouseLeave');
     },
     cellMouseEnter(row, column, cell, event) {
-      this.cellMouseEvent(row, column, cell, event, "cellMouseEnter");
+      this.cellMouseEvent(row, column, cell, event, 'cellMouseEnter');
     },
     handleTableData() {
       this.total_ = this.setTotal(this.responseData_);
@@ -227,11 +240,11 @@ export default {
         ...val,
         index: index + 1,
       }));
-      this.$emit("update:total", this.total_);
-      this.$emit("update:tableData", this.tableData_);
+      this.$emit('update:total', this.total_);
+      this.$emit('update:tableData', this.tableData_);
     },
     handleSelectionChange(list) {
-      this.$emit("update:selectList", list);
+      this.$emit('update:selectList', list);
     },
   },
 };

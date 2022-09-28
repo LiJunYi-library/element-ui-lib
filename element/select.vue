@@ -67,12 +67,12 @@ export default {
         return data;
       },
     },
-    formatterDisabled:{
+    formatterDisabled: {
       type: Function,
       default: (data) => {
         return false;
       },
-    }
+    },
   },
   data() {
     // console.log("this.responseData_", this.responseData_);
@@ -116,6 +116,7 @@ export default {
       this.setDefaultstate();
     },
     setCurrent() {
+      if (!this.responseData_) return;
       this.currentItem = this.responseData_.find(
         (el) => this.state === this.formatterValue(el)
       );

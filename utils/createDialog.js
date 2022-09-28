@@ -19,14 +19,22 @@ function createDialog(template, defaultOptions) {
     }
   }
 
-  const dialog = function(options = {}, callback) {
+  const dialog = function (options = {}, callback) {
     if (!instance) {
-      initInstance();
+      initInstance()
     }
-    document.body.appendChild(instance.$el);
-    let config = Object.assign(defaultOptions, options);
-    merge(instance, config)
-    instance.visible = true
+    return new Promise((resolve, reject) => {
+      document.body.appendChild(instance.$el)
+      const config = Object.assign(defaultOptions, options)
+      merge(instance, config)
+      instance.visible = true
+      instance.resolve = (res) => {
+        resolve(res)
+      }
+      instance.reject = (res) => {
+        reject(res)
+      }
+    })
   }
 
   return dialog
