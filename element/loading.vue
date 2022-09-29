@@ -1,9 +1,11 @@
 <template>
-  <div class="loading">loading...loading</div>
+  <div v-loading="loading_">
+    <slot />
+  </div>
 </template>
 <script>
+import fetchOptions from "../mixins/fetchOptions";
 export default {
-  data: () => ({}),
-  methods: {}
-}
+  mixins: [fetchOptions],
+};
 </script>

@@ -28,6 +28,11 @@ export default {
             nativeOn: {
               click: () => this.onClick(row),
             },
+            style: {
+              "white-space": "pre-wrap",
+              "text-align": "left",
+              "line-height": "18px",
+            },
           },
           val || ""
         );
