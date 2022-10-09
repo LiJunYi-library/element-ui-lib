@@ -1,5 +1,6 @@
 import config from './config.js';
 import Fetch from './http.js';
+import components from './components/index'
 
 const module = {};
 const element = {};
@@ -40,11 +41,19 @@ element.install = function install(Vue) {
     })
   }
 
+  for (const key in components) {
+    if (Object.hasOwnProperty.call(components, key)) {
+      Vue.component(`${config.name}-${key}`, components[key]);
+    }
+  }
+
   for (const key in element) {
     if (Object.hasOwnProperty.call(element, key)) {
       Vue.component(`${config.name}-${key}`, element[key]);
     }
   }
+
+
 
   for (const key in module) {
     if (Object.hasOwnProperty.call(module, key)) {
