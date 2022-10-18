@@ -146,7 +146,9 @@ Fetch.create = function (props = {}) {
       }
     }
     return request({ method: config.method || 'post', url: url, data: formData, headers: { 'Content-Type': 'multipart/form-data' } }, config);
-  }
+  };
+
+  request.form = request.uploadFile;
 
   request.downloadFile = (buffer, fileName) => {
     const blob = new Blob([buffer]);
