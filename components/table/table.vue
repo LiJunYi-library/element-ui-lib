@@ -1,5 +1,5 @@
 <script>
-import fetchOptions from "../mixins/fetchOptions";
+import fetchOptions from "../../mixins/fetchOptions"; 
 
 export default {
   mixins: [fetchOptions],
